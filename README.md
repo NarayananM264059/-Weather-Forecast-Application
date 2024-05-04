@@ -26,7 +26,7 @@ The Weather Forecast App is a web application that provides users with current w
 2. Navigate to the project directory:
 
     ```bash
-    cd weather-forecast-app
+    cd Weather-Forecast-Application
     ```
 
 3. Open the `index.html` file in your web browser to run the application locally.
