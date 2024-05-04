@@ -19,7 +19,8 @@ The Weather Forecast App is a web application that provides users with current w
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/your-username/weather-forecast-app.git
+    git clone https://github.com/NarayananM264059/Weather-Forecast-Application.git
+
     ```
 
 2. Navigate to the project directory:
