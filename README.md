@@ -46,7 +46,8 @@ The Weather Forecast App is a web application that provides users with current w
 
 ## Credits
 
-- This project was created by Narayanan.M
+- This project was developed by Narayanan.M
+- This application uses the OpenWeatherMap API to fetch weather data.
 
 
 
