@@ -10,6 +10,7 @@ const humidityElement = document.getElementById('humidity');
 const currentLocationBtn = document.getElementById('currentLocationBtn');
 const weatherDescriptionElement = document.getElementById('weatherDescription');
 const forecastContainer = document.getElementById('forecastContainer');
+const currentweathercontainer = document.getElementById('current-weather')
 
 // Function to show the weather display
 function showWeatherDisplay() {
@@ -90,6 +91,7 @@ async function getWeatherData(city) {
     const data = await response.json();
 
     if (response.ok) {
+        showWeatherDisplay()
         return data;
     } else {
         if (data.cod === '404') {
@@ -166,12 +168,7 @@ function displayWeather(weatherData) {
 
 // Function to clear weather data
 function clearWeatherData() {
-    cityNameElement.textContent = '';
-    dateElement.textContent = '';
-    weatherIconElement.src = '';
-    temperatureElement.textContent = 'Temperature: N/A';
-    windSpeedElement.textContent = 'Wind: N/A';
-    humidityElement.textContent = 'Humidity: N/A';
+    currentweathercontainer.innerHTML='';
 }
 
 // Function to display 5DayForecast weather data
