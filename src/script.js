@@ -70,13 +70,18 @@ currentLocationBtn.addEventListener('click', async () => {
                 displayWeather(weatherData);
                 const forecastData = await get5DayForecastByCoords(latitude, longitude);
                 display5DayForecast(forecastData);
+            }, (error) => {
+                console.error('Error getting current location:', error);
+                alert('Geolocation access was denied. Please enter a city manually.');
             });
         } else {
             throw new Error('Geolocation is not supported by this browser.');
         }
     } catch (error) {
         console.error('Error fetching weather data for current location:', error);
+        clearWeatherData();
         clear5DayForecast();
+        alert('Error fetching weather data for current location. Please try again later.');
     }
 });
 
