@@ -249,3 +249,4 @@ function clear5DayForecast() {
 
 // Call the function to populate recent searches
 populateDatalist();
+
