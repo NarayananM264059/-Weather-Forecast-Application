@@ -3,6 +3,14 @@
 ## Overview
 This document provides documentation for the Weather Forecast Application, which allows users to get current weather information and a 5-day forecast for a specific city. The application includes features for searching by city name, using the current location, and viewing recently searched cities.
 
+## Usage
+
+- Enter a city name in the search input field and click the "Search" button to retrieve weather data for that city.
+- Click the "Current Location" button to get weather data based on your current location.
+- The main weather display section will show the current weather conditions, including temperature, wind speed, and humidity, as well as a weather icon.
+- The 5-day forecast section will display weather forecasts for the next 5 days, including temperature, wind speed, and humidity.
+- Use the dropdown menu to access recently searched cities and quickly view their weather data.
+
 ## HTML Structure
 The HTML structure of the application consists of the following key elements:
 - Header: Displays the title of the application.
