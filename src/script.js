@@ -36,8 +36,12 @@ function validateSearchInput(city) {
 // Function to add a city to the recent searches
 function addToRecentSearches(city) {
     let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
-    recentSearches.unshift(city);
-    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    const lowercaseCity = city.toLowerCase();
+    
+    if (!recentSearches.includes(lowercaseCity)) {
+        recentSearches.unshift(lowercaseCity);
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
 }
 
 // Function to populate the datalist with recent searches
@@ -71,7 +75,8 @@ function getCurrentPosition() {
 
 // Form submission event listener
 searchForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    // Prevent default form submission
+    event.preventDefault(); 
     const city = cityInput.value.trim();
     if (!validateSearchInput(city)) {
         return;
@@ -242,5 +247,5 @@ function clear5DayForecast() {
     forecastContainer.innerHTML = '';
 }
 
-
-
+// Call the function to populate recent searches
+populateDatalist();
