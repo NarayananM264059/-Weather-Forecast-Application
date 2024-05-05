@@ -1,4 +1,4 @@
-// Get references to HTML elements
+// DOM elements
 const searchForm = document.getElementById('searchForm');
 const cityInput = document.getElementById('cityInput');
 const cityNameElement = document.getElementById('cityName');
@@ -10,14 +10,16 @@ const humidityElement = document.getElementById('humidity');
 const currentLocationBtn = document.getElementById('currentLocationBtn');
 const weatherDescriptionElement = document.getElementById('weatherDescription');
 const forecastContainer = document.getElementById('forecastContainer');
-const currentweathercontainer = document.getElementById('current-weather')
+const currentWeatherContainer = document.getElementById('current-weather');
+const weatherDisplay = document.getElementById('weatherDisplay');
+const citiesDatalist = document.getElementById('cities');
 
 // Function to show the weather display
 function showWeatherDisplay() {
     weatherDisplay.classList.remove('hidden');
 }
 
-// Function to clear the form
+// Function to clear the city input form
 function clearForm() {
     cityInput.value = '';
 }
@@ -31,36 +33,65 @@ function validateSearchInput(city) {
     return true;
 }
 
-// Event listener for form submission
+// Function to add a city to the recent searches
+function addToRecentSearches(city) {
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+    recentSearches.unshift(city);
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+}
+
+// Function to populate the datalist with recent searches
+function populateDatalist() {
+    citiesDatalist.innerHTML = '';
+    const recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+    recentSearches.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        citiesDatalist.appendChild(option);
+    });
+}
+
+// Function to handle errors
+function handleError(error) {
+    console.error('Error:', error);
+    const errorMessage = error.message || 'An error occurred.';
+    alert(errorMessage);
+}
+
+// Function to get the current position using Geolocation API
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+        } else {
+            reject(new Error('Geolocation is not supported by this browser.'));
+        }
+    });
+}
+
+// Form submission event listener
 searchForm.addEventListener('submit', async (event) => {
-    // Prevent default form submission
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
     const city = cityInput.value.trim();
     if (!validateSearchInput(city)) {
         return;
     }
     clearForm();
-    // If city is not empty, proceed with fetching weather data
-    if (city) {
-        try {
-            const weatherData = await getWeatherData(city);
-            displayWeather(weatherData);
-            const forecastData = await get5DayForecast(city);
-            display5DayForecast(forecastData);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-            if (error.message === 'City not found') {
-                alert('City not found. Please enter a valid city name.');
-            } else {
-                alert('Error fetching weather data. Please try again later.');
-            }
-            clearWeatherData();
-            clear5DayForecast();
-        }
+    try {
+        const weatherData = await getWeatherData(city);
+        displayWeather(weatherData);
+        addToRecentSearches(city);
+        populateDatalist();
+        const forecastData = await get5DayForecast(city);
+        display5DayForecast(forecastData);
+    } catch (error) {
+        handleError(error);
+        clearWeatherData();
+        clear5DayForecast();
     }
 });
 
-// Event listener for "Current Location" button
+// Current location button event listener
 currentLocationBtn.addEventListener('click', async () => {
     try {
         if (navigator.geolocation) {
@@ -70,6 +101,8 @@ currentLocationBtn.addEventListener('click', async () => {
                 displayWeather(weatherData);
                 const forecastData = await get5DayForecastByCoords(latitude, longitude);
                 display5DayForecast(forecastData);
+                addToRecentSearches(cityInput.value);
+                populateDatalist();
             }, (error) => {
                 console.error('Error getting current location:', error);
                 alert('Geolocation access was denied. Please enter a city manually.');
@@ -96,7 +129,7 @@ async function getWeatherData(city) {
     const data = await response.json();
 
     if (response.ok) {
-        showWeatherDisplay()
+        showWeatherDisplay();
         return data;
     } else {
         if (data.cod === '404') {
@@ -107,13 +140,13 @@ async function getWeatherData(city) {
     }
 }
 
-// Function to fetch weather data of coordinates
+// Function to fetch weather data by coordinates
 async function getWeatherDataByCoords(latitude, longitude) {
     const API_KEY = 'f3af0388f65c8a87d4e325a233656263';
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
     const response = await fetch(apiUrl);
     const data = await response.json();
-    showWeatherDisplay()
+    showWeatherDisplay();
 
     if (response.ok) {
         return data;
@@ -136,7 +169,7 @@ async function get5DayForecast(city) {
     }
 }
 
-// Function to fetch 5-day forecast data of coordinates
+// Function to fetch 5-day forecast data by coordinates
 async function get5DayForecastByCoords(latitude, longitude) {
     const API_KEY = 'f3af0388f65c8a87d4e325a233656263';
     const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
@@ -155,12 +188,11 @@ function displayWeather(weatherData) {
     const cityName = weatherData.name;
     const date = new Date().toLocaleDateString();
     const iconCode = weatherData.weather[0].icon;
-    const iconUrl = `http://openweathermap.org/img/wn/${iconCode}.png`;
+    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
     const temperature = weatherData.main.temp;
     const windSpeed = weatherData.wind.speed;
     const humidity = weatherData.main.humidity;
     const weatherMain = weatherData.weather[0].main;
-
 
     cityNameElement.textContent = cityName;
     dateElement.textContent = date;
@@ -171,26 +203,18 @@ function displayWeather(weatherData) {
     humidityElement.textContent = `Humidity: ${humidity}%`;
 }
 
-// Function to clear weather data
-function clearWeatherData() {
-    currentweathercontainer.innerHTML='';
-}
-
-// Function to display 5DayForecast weather data
+// Function to display 5-day forecast weather data
 function display5DayForecast(forecastData) {
-    forecastContainer.innerHTML = ''; 
-    // Get one forecast per day
-    const forecasts = forecastData.list.filter((forecast, index) => index % 8 === 0); 
-
+    forecastContainer.innerHTML = '';
+    const forecasts = forecastData.list.filter((forecast, index) => index % 8 === 0);
     forecasts.forEach((forecast, index) => {
         const date = new Date(forecast.dt * 1000).toLocaleDateString();
         const iconCode = forecast.weather[0].icon;
-        const iconUrl = `http://openweathermap.org/img/wn/${iconCode}.png`;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
         const temperature = forecast.main.temp;
         const windSpeed = forecast.wind.speed;
         const humidity = forecast.main.humidity;
         const weatherMain = forecast.weather[0].main;
-
         const forecastCard = `
             <div class="current-weather bg-indigo-500 text-black p-4 rounded-lg">
                 <h2 class="text-3xl lg:text-4xl font-bold mb-4">Day ${index + 1}</h2>
@@ -208,10 +232,15 @@ function display5DayForecast(forecastData) {
     });
 }
 
-// Function to clear 5DayForecast weather data
-function clear5DayForecast() {
-    // Clear previous forecast data
-    forecastContainer.innerHTML = ''; 
+// Function to clear weather data
+function clearWeatherData() {
+    currentWeatherContainer.innerHTML = '';
 }
+
+// Function to clear 5-day forecast weather data
+function clear5DayForecast() {
+    forecastContainer.innerHTML = '';
+}
+
 
 

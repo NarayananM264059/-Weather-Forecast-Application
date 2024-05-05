@@ -21,7 +21,13 @@
         <!-- Search Form -->
         <form id="searchForm" class="flex flex-col items-center justify-center h-1/4 mt-4">
             <div class="flex flex-col md:flex-row items-center justify-center">
-                <input type="text" id="cityInput" class="border rounded-md py-2 px-4 mb-2 md:mb-0 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-gray-100 text-gray-800" placeholder="Enter city name">
+                <input type="text" list="cities" id="cityInput" class="border rounded-md py-2 px-4 mb-2 md:mb-0 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-gray-100 text-gray-800" placeholder="Enter city name">
+                <datalist id="cities" class="border rounded-md py-2 px-4 mb-2 md:mb-0 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-gray-100 text-gray-800">
+                    <!-- Options will be populated dynamically by JavaScript -->
+                </datalist>
+                <ul id="recentSearchesList" class="mt-4">
+                    <!-- Recent searches will be populated dynamically by JavaScript -->
+                </ul>
                 <div class="flex items-center mx-4">
                     <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md mr-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600">Search</button>
                     <div class="h-8 w-px bg-gray-400 mx-4 hidden md:block"></div> <!-- Vertical line divider visible on medium screens and above -->
@@ -29,6 +35,7 @@
                 </div>
             </div>
         </form>
+
 
 
         <!-- Weather Display -->
